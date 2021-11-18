@@ -1,13 +1,32 @@
 .button {
     border: 1px solid black;
     cursor: pointer;
-    background-color: antiquewhite;
+    background-color: rgba(216, 112, 147, 0.486);
     padding: 11px;
     margin: 11px;
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+    display: block;
+    text-align: center;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 #buttons {
-    display:grid;
+    display: flex;
     grid-template-columns: auto auto auto;
     grid-auto-columns: auto;
+    margin: 30px;
+}
+
+.idle {
+    opacity: 20%;
+    pointer-events: none;
+}
+
+#displayStatus {
+    font-weight: bold;
+    color: palevioletred;
 }

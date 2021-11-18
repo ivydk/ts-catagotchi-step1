@@ -1,19 +1,23 @@
-<html>
+<!DOCTYPE html>
+
 <head>
-	<link href="style.css" rel="stylesheet" />
+    <link href="style.css" rel="stylesheet" />
+    <title>Catagochi</title>
 </head>
+
 <body>
-	<div id="game">
-		Status <span id="displayStatus">Game loaded as module. Please view via server and not locally.</span><br/>
-		Mood: <span id="displayMood">Coming to life...</span><br/>
-		Hunger: <span id="displayHunger">N</span><br/>
-		Energy: <span id="displayEnergy">N</span><br/>
-		<div id="buttons">
-			<div class="button" id="buttonFeed">Feed</div>
-			<div class="button" id="buttonPlay">Play</div>
-			<div class="button" id="buttonSleep">Sleep</div>
-		</div>
-	</div>
-	<script type="module" src="app.js"></script>
+    <div id="game">
+        Status: <br> <span id="displayStatus"></span><br> Mood:
+        <span id="displayMood">Coming to life...</span>
+        <br> Hunger: <span id="displayHunger">N</span><br> Energy: <span id="displayEnergy">N</span><br>
+        <div id="buttons">
+            <div class="button" id="buttonFeed">Feed</div>
+            <div class="button" id="buttonPlay">Play</div>
+            <div class="button" id="buttonSleep">Sleep</div>
+        </div>
+        <div id="displayCatDied"></div>
+    </div>
+    <script type="module" src="app.js"></script>
 </body>
+
 </html>

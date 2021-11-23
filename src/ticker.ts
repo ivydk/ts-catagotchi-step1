@@ -42,10 +42,10 @@ export default class Ticker {
       this.catagochi.gameTick();
       this.lastTickTimeStamp = timestamp;
 
-      // checked of de cat dood is, misschien beter om gameTick een bool mee te geven
-      if (!(this.catagochi.isAlive())) {
-        this.isStopped = false;
-      }
+      // // checked of de cat dood is, misschien beter om gameTick een bool mee te geven
+      // if (!(this.cat.alive) {
+      //   this.isStopped = false;
+      // }
     }
     // Request the browser to call the step method on next animation frame
     if (this.isStopped === true) {

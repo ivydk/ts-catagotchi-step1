@@ -30,3 +30,10 @@
     font-weight: bold;
     color: palevioletred;
 }
+
+#displayCatDied {
+    padding-top: 20px;
+    font-weight: bold;
+    color: palevioletred;
+    font-size: 30px;
+}

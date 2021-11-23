@@ -7,14 +7,20 @@
  *        }
  */
 
+import KeyListener from './keyListner';
+
 export default class Cat {
   private alive: boolean;
 
-  public mood: number;
+  private mood: number;
 
-  public energy: number;
+  private energy: number;
 
-  public hunger: number;
+  private hunger: number;
+
+  private keyListner: KeyListener;
+
+  private 1: number;
 
   /**
    * @param alive starting bool
@@ -36,10 +42,6 @@ export default class Cat {
 
     // !! nog doen: de buttons idle maken als de cat dood is
     // this.allButtons = document.querySelector('#buttons');
-
-    this.feed();
-    this.play();
-    this.sleep();
   }
 
   public isAlive = (): boolean => {
@@ -51,49 +53,21 @@ export default class Cat {
     return this.alive;
   };
 
-  private feed = (): number => {
-    const feedButton = document.querySelector('#buttonFeed');
-    feedButton.addEventListener('click', () => {
-      console.log('cliked the play button');
-      if (this.hunger <= 10 && this.hunger > 0) {
-        this.hunger -= 1;
-      }
-      console.log(this.hunger);
-      this.updateDisplays();
-    });
-    return this.hunger;
+  public feed = (): void => {
+    this.hunger -= 1;
+    this.updateDisplays();
   };
 
-  private sleep = (): number => {
-    const sleepButton = document.querySelector('#buttonSleep');
-    sleepButton.addEventListener('click', () => {
-      console.log('cliked the feed button');
-      if (this.energy < 10 && this.energy >= 0) {
-        this.energy += 1;
-      }
-      if (this.hunger < 10 && this.hunger >= 0) {
-        this.hunger += 1;
-      }
-      this.updateDisplays();
-      console.log(this.energy);
-    });
-    return this.energy;
+  public sleep = (): void => {
+    this.energy += 1;
+    this.hunger += 1;
+    this.updateDisplays();
   };
 
-  private play = (): number => {
-    const playButton = document.querySelector('#buttonPlay');
-    playButton.addEventListener('click', () => {
-      console.log('cliked the play button');
-      if (this.mood < 10 && this.mood >= 0) {
-        this.mood += 1;
-      }
-      if (this.energy <= 10 && this.energy > 0) {
-        this.energy -= 1;
-      }
-      console.log(this.energy);
-      this.updateDisplays();
-    });
-    return this.mood;
+  public play = (): void => {
+    this.mood += 1;
+    this.energy -= 1;
+    this.updateDisplays();
   };
 
   // !! liever in de game class
@@ -113,7 +87,7 @@ export default class Cat {
    */
   public getIsAlive(): boolean {
     // this.alive = false;
-    return this.alive;
+    return this.isAlive();
   }
 
   /**
@@ -141,37 +115,9 @@ export default class Cat {
   }
 
   /**
-   * to set the hunger var
-   *
-   * @param hunger number of the hunger var
-   */
-  public setHunger(hunger: number): void {
-    this.hunger = hunger;
-  }
-
-  /**
-   * to set the hunger var
-   *
-   * @param mood number of the hunger var
-   */
-  public setMood(mood: number): void {
-    this.mood = mood;
-  }
-
-  /**
-   * to set the hunger var
-   *
-   * @param energy number of the hunger var
-   */
-  public setEnergy(energy: number): void {
-    this.energy = energy;
-  }
-
-  /**
    *
    */
   public ignore(): void {
-    console.log('ignore werkt');
     this.isAlive();
     if (this.alive) {
       if (this.mood > 0) {
@@ -181,4 +127,25 @@ export default class Cat {
       this.energy -= 1;
     }
   }
+
+  public meow = (): string => {
+    let meow = '';
+    if (this.hunger < 7 && this.mood > 3 && this.energy > 3) {
+      meow = `I'm happy <br>`;
+    }
+    if (this.hunger >= 7) {
+      meow += 'Feed me! <br>';
+    }
+    if (this.mood <= 3) {
+      meow += 'Play with me! <br>';
+    }
+    if (this.energy <= 3) {
+      meow += 'I need to sleep! <br>';
+    }
+    return meow;
+  };
+
+  public setMood = (mood: number) => {
+    this.mood = mood;
+  };
 }

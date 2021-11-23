@@ -1,5 +1,6 @@
 import Ticker from './ticker.js';
 import Cat from './cat.js';
+import KeyListener from './keyListner.js';
 
 export default class Catagotchi {
   private cat: Cat;
@@ -12,6 +13,14 @@ export default class Catagotchi {
 
   private ticker: Ticker;
 
+  private keyListner: KeyListener;
+
+  private startMood: number;
+
+  private startHunger: number;
+
+  private startEnergy: number;
+
   /**
    * Creates the Catagotchi game. Sets all of the attributes of the
    * cat (mood, hunger, sleep, aliveness) to their default states.
@@ -22,8 +31,13 @@ export default class Catagotchi {
    */
   public constructor(gameDOM: Element) {
     // default status
-    this.ticker = new Ticker(this, 3000);
-    this.cat = new Cat(true, 5, 6, 4);
+    this.startEnergy = 10;
+    this.startMood = 10;
+    this.startHunger = 0;
+
+    this.ticker = new Ticker(this, 1000);
+    this.cat = new Cat(true, this.startMood, this.startEnergy, this.startHunger);
+    this.keyListner = new KeyListener();
 
     this.status = 'I\'m happy <br>';
 
@@ -35,32 +49,48 @@ export default class Catagotchi {
    * Called for every game tick. Is used in the ticker
    */
   public gameTick(): void {
-    if (this.cat.getIsAlive()) {
+    document.querySelector('#displayStatus').innerHTML = this.cat.meow();
+    if (this.cat.isAlive()) {
       this.cat.ignore();
+
+      this.executeUserAction();
+
       this.cat.updateDisplays();
     } else {
-      document.querySelector('#buttons').classList.add('idle');
       document.querySelector('#displayCatDied').innerHTML = 'You killed the cat :(';
-      console.log('else in gameTick werkt');
+      this.clearScreen();
     }
-    console.log(this.cat.getIsAlive());
   }
 
-  private meow = (): string => {
-    let meow = '';
-    if (this.cat.hunger < 7 && this.cat.mood > 3 && this.cat.energy > 3) {
-      meow = `I'm happy <br>`;
+  private clearScreen = () => {
+    console.log('clear pleaseee');
+    this.cat.setMood(this.startMood);
+    console.log(this.cat.getMood());
+  };
+
+  private executeUserAction = () => {
+    // 70 is 'f' for feed
+    if (this.cat.getIsAlive()) {
+      if (this.keyListner.isKeyDown(KeyListener.KEY_F)) {
+        console.log('FEEEED');
+        this.cat.feed();
+        this.cat.updateDisplays();
+      }
+
+      // 83 is 's' for sleep
+      if (this.keyListner.isKeyDown(83)) {
+        this.cat.sleep();
+        console.log('SLEEP');
+        this.cat.updateDisplays();
+      }
+
+      // 80 is 'p' for play
+      if (this.keyListner.isKeyDown(80)) {
+        this.cat.play();
+        console.log('PLAYY');
+        this.cat.updateDisplays();
+      }
     }
-    if (this.cat.hunger >= 7) {
-      meow += 'Feed me! <br>';
-    }
-    if (this.cat.mood <= 3) {
-      meow += 'Play with me! <br>';
-    }
-    if (this.cat.energy <= 3) {
-      meow += 'I need to sleep! <br>';
-    }
-    return meow;
   };
 }
 
@@ -69,7 +99,6 @@ const init = () => {
 };
 
 window.addEventListener('load', init);
-
 
 /**
  * versnelde ifelse

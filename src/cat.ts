@@ -111,7 +111,7 @@ export default class Cat {
    *
    * @returns the bool for when the cat is dead
    */
-  public catMood(): boolean {
+  public getIsAlive(): boolean {
     // this.alive = false;
     return this.alive;
   }
@@ -167,7 +167,18 @@ export default class Cat {
     this.energy = energy;
   }
 
-  public ignor(): void {
-    console.log('ignor werkt');
+  /**
+   *
+   */
+  public ignore(): void {
+    console.log('ignore werkt');
+    this.isAlive();
+    if (this.alive) {
+      if (this.mood > 0) {
+        this.mood -= 1;
+      }
+      this.hunger += 1;
+      this.energy -= 1;
+    }
   }
 }

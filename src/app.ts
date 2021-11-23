@@ -8,10 +8,6 @@ export default class Catagotchi {
 
   private status: string;
 
-  private allButtons: HTMLDetailsElement;
-
-  private displayCatDied: HTMLDivElement;
-
   private gameDOM: Element;
 
   private ticker: Ticker;
@@ -39,21 +35,15 @@ export default class Catagotchi {
    * Called for every game tick. Is used in the ticker
    */
   public gameTick(): void {
-    this.cat.ignor();
-    console.log('hi');
-    if (this.cat.getEnergy() > 0 && this.cat.getHunger() > 0) {
-      this.cat.setEnergy((this.cat.getEnergy() - 1));
-      this.cat.setHunger(this.cat.getHunger() + 1);
-      if (this.cat.mood > 0) {
-        this.cat.setMood(this.cat.getMood() + 1);
-      }
+    if (this.cat.getIsAlive()) {
+      this.cat.ignore();
       this.cat.updateDisplays();
     } else {
-      // console.log(`kitty alive is ${this.isAlive()}`);
-      this.allButtons.classList.add('idle');
-      this.displayCatDied.innerHTML = 'You killed the cat :(';
-      // Request the browser to call the step method on next animation frame
+      document.querySelector('#buttons').classList.add('idle');
+      document.querySelector('#displayCatDied').innerHTML = 'You killed the cat :(';
+      console.log('else in gameTick werkt');
     }
+    console.log(this.cat.getIsAlive());
   }
 
   private meow = (): string => {

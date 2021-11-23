@@ -1,4 +1,6 @@
-class Catagotchi {
+import Ticker from './ticker.js';
+
+export default class Catagotchi {
   private lastTickTimeStamp: number;
 
   private alive: boolean;
@@ -8,8 +10,6 @@ class Catagotchi {
   private energy: number;
 
   private hunger: number;
-
-  private gameDOM: Element;
 
   private displayMood: HTMLDivElement;
 
@@ -29,15 +29,11 @@ class Catagotchi {
 
   private allButtons: HTMLDetailsElement;
 
-  private intervalTime: number;
-
   private displayCatDied: HTMLDivElement;
 
-  private element: HTMLDivElement;
+  private gameDOM: Element;
 
-  private width: number;
-
-  // private intervalTimer;
+  private ticker: Ticker;
 
   /**
    * Creates the Catagotchi game. Sets all of the attributes of the
@@ -47,13 +43,12 @@ class Catagotchi {
    *
    * @param gameDOM pass the DOM element where the game will run.
    */
-  constructor(gameDOM: Element) {
-    this.startRunning();
-
+  public constructor(gameDOM: Element) {
     // default status
+    this.ticker = new Ticker(this, 3000);
     this.alive = this.isAlive();
 
-    this.status = 'feed me';
+    this.status = `I'm happy <br>`;
     this.mood = 5;
     this.energy = 5;
     this.hunger = 5;
@@ -84,7 +79,7 @@ class Catagotchi {
     this.sleep();
   }
 
-  isAlive = () => {
+  public isAlive = (): boolean => {
     if (this.hunger >= 10 || this.energy <= 0) {
       this.alive = false;
     } else {
@@ -93,7 +88,7 @@ class Catagotchi {
     return this.alive;
   };
 
-  feed = () => {
+  private feed = (): number => {
     this.feedButton.addEventListener('click', () => {
       if (this.hunger <= 10 && this.hunger > 0) {
         this.hunger -= 1;
@@ -103,7 +98,7 @@ class Catagotchi {
     return this.hunger;
   };
 
-  sleep = () => {
+  private sleep = (): void => {
     this.sleepButton.addEventListener('click', () => {
       if (this.energy < 10 && this.energy >= 0) {
         this.energy += 1;
@@ -116,7 +111,7 @@ class Catagotchi {
     });
   };
 
-  play = () => {
+  private play = (): void => {
     this.playButton.addEventListener('click', () => {
       if (this.mood < 10 && this.mood >= 0) {
         this.mood += 1;
@@ -129,7 +124,7 @@ class Catagotchi {
     });
   };
 
-  meow = () => {
+  private meow = (): string => {
     let meow = '';
     if (this.hunger < 7 && this.mood > 3 && this.energy > 3) {
       meow = `I'm happy <br>`;
@@ -146,35 +141,39 @@ class Catagotchi {
     return meow;
   };
 
-  catDied = () => {
-    this.allButtons.classList.add('idle');
-  };
-
-  getDOMElements = () => {
-
-  };
-
-  updateDisplays = (displayElement: HTMLDivElement, element: number | string) => {
-    // const str = new String(element);
+  private updateDisplays = (displayElement: HTMLDivElement, element: number | string): void => {
+    // eslint-disable-next-line no-param-reassign
     displayElement.innerHTML = `${element}`;
   };
 
   /**
-   * Called for every game tick.
+   * Called for every game tick. Is used in the ticker
    */
-  public gameTick() {
+  public gameTick(): void {
     this.energy -= 1;
     this.updateDisplays(this.displayEnergy, this.energy);
 
-    this.mood -= 1;
-    this.updateDisplays(this.displayMood, this.mood);
+    if (this.mood > 0) {
+      this.mood -= 1;
+      this.updateDisplays(this.displayMood, this.mood);
+    }
 
     this.hunger += 1;
     this.updateDisplays(this.displayHunger, this.hunger);
 
     this.alive = this.isAlive();
 
-    console.log(`Hunger: ${this.hunger} \n Mood: ${this.mood} \n Energy: ${this.energy} \n Alive: ${this.alive}`);
+    if (this.isAlive()) {
+      this.updateDisplays(this.displayStatus, this.meow());
+    } else {
+      // console.log(`kitty alive is ${this.isAlive()}`);
+      this.allButtons.classList.add('idle');
+      this.displayCatDied.innerHTML = 'You killed the cat :(';
+      // Request the browser to call the step method on next animation frame
+    }
+
+    // console.log(`Hunger: ${this.hunger} \n Mood: ${this.mood} \n Energy: ${this.energy} \n Alive:
+    // ${this.alive}`);
   }
 
   /**
@@ -195,26 +194,15 @@ class Catagotchi {
    * @param timestamp a `DOMHighResTimeStamp` similar to the one returned by
    *   `performance.now()`, indicating the point in time when `requestAnimationFrame()`
    *   starts to execute callback functions
-   * @returns null to stop the function
    */
-  private step = (timestamp: number): boolean => {
+  private step = (timestamp: number) => {
     // Check if it is time to perform the next Tick
     if (timestamp - this.lastTickTimeStamp >= 3000 && this.isAlive()) {
       // Call the method of this object that needs to be called
       this.gameTick();
       this.lastTickTimeStamp = timestamp;
     }
-    if (this.isAlive()) {
-      this.updateDisplays(this.displayStatus, this.meow());
-    } else {
-      console.log(`kitty alive is ${this.isAlive()}`);
-      this.allButtons.classList.add('idle');
-      this.displayCatDied.innerHTML = 'You killed the cat :(';
-      return null;
-    }
-    // Request the browser to call the step method on next animation frame
     requestAnimationFrame(this.step);
-    return null;
   };
 }
 
@@ -223,3 +211,4 @@ const init = () => {
 };
 
 window.addEventListener('load', init);
+

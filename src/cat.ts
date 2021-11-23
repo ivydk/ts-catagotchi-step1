@@ -1,3 +1,12 @@
+/**
+ * je wilt de properties niet op public hebben omdat mensen deze dan kunnen aanpassen,
+ * daarom geruik je getter en setter, methodes die de waardes teruggeven
+ *
+ * bijv.  getEnergy(){
+ *          return this.energy;
+ *        }
+ */
+
 export default class Cat {
   private alive: boolean;
 
@@ -23,6 +32,7 @@ export default class Cat {
     this.mood = mood;
     this.energy = energy;
     this.hunger = hunger;
+    this.updateDisplays();
 
     // !! nog doen: de buttons idle maken als de cat dood is
     // this.allButtons = document.querySelector('#buttons');
@@ -34,7 +44,7 @@ export default class Cat {
 
   public isAlive = (): boolean => {
     if (this.hunger >= 10 || this.energy <= 0) {
-      this.catDied();
+      this.alive = false;
     } else {
       this.alive = true;
     }
@@ -44,39 +54,45 @@ export default class Cat {
   private feed = (): number => {
     const feedButton = document.querySelector('#buttonFeed');
     feedButton.addEventListener('click', () => {
+      console.log('cliked the play button');
       if (this.hunger <= 10 && this.hunger > 0) {
         this.hunger -= 1;
       }
+      console.log(this.hunger);
+      this.updateDisplays();
     });
-    this.updateDisplays();
     return this.hunger;
   };
 
   private sleep = (): number => {
     const sleepButton = document.querySelector('#buttonSleep');
     sleepButton.addEventListener('click', () => {
+      console.log('cliked the feed button');
       if (this.energy < 10 && this.energy >= 0) {
         this.energy += 1;
       }
       if (this.hunger < 10 && this.hunger >= 0) {
         this.hunger += 1;
       }
+      this.updateDisplays();
+      console.log(this.energy);
     });
-    this.updateDisplays();
     return this.energy;
   };
 
   private play = (): number => {
     const playButton = document.querySelector('#buttonPlay');
     playButton.addEventListener('click', () => {
+      console.log('cliked the play button');
       if (this.mood < 10 && this.mood >= 0) {
         this.mood += 1;
       }
       if (this.energy <= 10 && this.energy > 0) {
         this.energy -= 1;
       }
+      console.log(this.energy);
+      this.updateDisplays();
     });
-    this.updateDisplays();
     return this.mood;
   };
 
@@ -91,7 +107,67 @@ export default class Cat {
     // this.displayCatDied = document.querySelector('#displayCatDied');
   };
 
-  private catDied = () => {
-    this.alive = false;
-  };
+  /**
+   *
+   * @returns the bool for when the cat is dead
+   */
+  public catMood(): boolean {
+    // this.alive = false;
+    return this.alive;
+  }
+
+  /**
+   *
+   * @returns returns the energy
+   */
+  public getEnergy(): number {
+    return this.energy;
+  }
+
+  /**
+   *
+   * @returns the mood
+   */
+  public getMood(): number {
+    return this.mood;
+  }
+
+  /**
+   *
+   * @returns returns the hunger var
+   */
+  public getHunger(): number {
+    return this.hunger;
+  }
+
+  /**
+   * to set the hunger var
+   *
+   * @param hunger number of the hunger var
+   */
+  public setHunger(hunger: number): void {
+    this.hunger = hunger;
+  }
+
+  /**
+   * to set the hunger var
+   *
+   * @param mood number of the hunger var
+   */
+  public setMood(mood: number): void {
+    this.mood = mood;
+  }
+
+  /**
+   * to set the hunger var
+   *
+   * @param energy number of the hunger var
+   */
+  public setEnergy(energy: number): void {
+    this.energy = energy;
+  }
+
+  public ignor(): void {
+    console.log('ignor werkt');
+  }
 }

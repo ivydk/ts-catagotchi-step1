@@ -21,15 +21,26 @@ export default class Catagotchi {
 
   private startEnergy: number;
 
+  // canvas
+  private readonly canvas: HTMLCanvasElement;
+
+  private readonly ctx: CanvasRenderingContext2D;
+
   /**
    * Creates the Catagotchi game. Sets all of the attributes of the
    * cat (mood, hunger, sleep, aliveness) to their default states.
    * Once set, the DOM elements will be gathered and updated.
    * Finally, the cat will meow to indicate that it is indeed alive!
    *
-   * @param gameDOM pass the DOM element where the game will run.
+   * @param canvas pass the canvas element where the game will run
    */
-  public constructor(gameDOM: Element) {
+  public constructor(canvas: HTMLCanvasElement) {
+    this.canvas = canvas;
+    this.ctx = this.canvas.getContext('2d');
+
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+
     // default status
     this.startEnergy = 10;
     this.startMood = 10;
@@ -95,7 +106,7 @@ export default class Catagotchi {
 }
 
 const init = () => {
-  const catGame = new Catagotchi(document.querySelector('#game'));
+  const catGame = new Catagotchi(document.querySelector('#canvas'));
 };
 
 window.addEventListener('load', init);

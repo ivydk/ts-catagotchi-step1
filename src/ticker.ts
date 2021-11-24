@@ -60,27 +60,8 @@ export default class Ticker {
     requestAnimationFrame(this.step);
   };
 
-  private test2 = (bool: boolean) => {
-    if (bool === false) {
-      console.log('hello');
-    } else {
-      this.startRunning();
-    }
-  };
-
   private checkIfStopped = () => {
     console.log(this.isStopped);
     return this.isStopped;
   };
-  // this.stopStartButton.addEventListener('click', () => {
-  //   this.test2(this.isStopped);
-  //   console.log('button is clicked');
-  //   if (this.isStopped === false) {
-  //     console.log(this.isStopped);
-  //     this.isStopped = true;
-  //   } else {
-  //     console.log(this.isStopped);
-  //     this.isStopped = false;
-  //   }
-  // });
 }

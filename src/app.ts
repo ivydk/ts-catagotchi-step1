@@ -24,6 +24,8 @@ export default class Catagotchi {
 
   private readonly ctx: CanvasRenderingContext2D;
 
+  private background: HTMLImageElement;
+
   /**
    * Creates the Catagotchi game. Sets all of the attributes of the
    * cat (mood, hunger, sleep, aliveness) to their default states.
@@ -35,6 +37,7 @@ export default class Catagotchi {
   public constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.ctx = this.canvas.getContext('2d');
+    this.background = this.loadNewImage('img/HAPPY-CAT.png');
 
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
@@ -57,9 +60,9 @@ export default class Catagotchi {
   public gameTick(): void {
     if (this.cat.isAlive()) {
       this.cat.ignore();
-
       this.executeUserAction();
-
+      this.updateDisplays();
+    } else {
       this.updateDisplays();
     }
   }
@@ -101,7 +104,22 @@ export default class Catagotchi {
     return img;
   }
 
-  private executeUserAction = () => {
+  private backgroundImage = (): HTMLImageElement => {
+    if (!this.cat.isAlive()) {
+      this.background = this.loadNewImage('img/DEAD-CAT-4.png');
+    } else if (this.cat.getEnergy() < 3) {
+      this.background = this.loadNewImage('img/SLEEPY-CAT.png');
+    } else if (this.cat.getHunger() <= 2 && this.cat.getMood() >= 8 && this.cat.getEnergy() >= 7) {
+      this.background = this.loadNewImage('img/HAPPY-CAT.png');
+    } else if (this.cat.getHunger() <= 4 && this.cat.getMood() >= 6 && this.cat.getEnergy() >= 5) {
+      this.background = this.loadNewImage('img/NORMAL-CAT.png');
+    } else {
+      this.background = this.loadNewImage('img/GRUMPY-CAT.png');
+    }
+    return this.background;
+  };
+
+  public executeUserAction = (): void => {
     // 70 is 'f' for feed
     if (this.cat.getIsAlive()) {
       if (this.keyListner.isKeyDown(KeyListener.KEY_F)) {
@@ -110,13 +128,13 @@ export default class Catagotchi {
       }
 
       // 83 is 's' for sleep
-      if (this.keyListner.isKeyDown(83)) {
+      if (this.keyListner.isKeyDown(KeyListener.KEY_S)) {
         this.cat.sleep();
         console.log('SLEEP');
       }
 
       // 80 is 'p' for play
-      if (this.keyListner.isKeyDown(80)) {
+      if (this.keyListner.isKeyDown(KeyListener.KEY_P)) {
         this.cat.play();
         console.log('PLAYY');
       }
@@ -124,8 +142,29 @@ export default class Catagotchi {
   };
 
   private updateDisplays = (): void => {
-    this.writeTextToCanvas('hello', 200, 200);
+    this.clearScreen();
+
+    this.ctx.drawImage(
+      this.background,
+      100,
+      100,
+      this.background.width / 2,
+      this.canvas.height / 2,
+    );
+
+    this.writeTextToCanvas(`Energy: ${this.cat.getEnergy()}`, 125, 600);
+    this.writeTextToCanvas(`Hunger: ${this.cat.getHunger()}`, 275, 600);
+    this.writeTextToCanvas(`Mood: ${this.cat.getMood()}`, 425, 600);
+    this.backgroundImage();
   };
+
+  /**
+   * Removes all painted things from the canvas.Starts at the top - left pixe
+   * of the canvas and stops at the bottom - right pixel.
+   */
+  private clearScreen() {
+    this.ctx.clearRect(8, 0, this.canvas.width, this.canvas.height);
+  }
 }
 
 const init = () => {

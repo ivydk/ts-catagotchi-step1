@@ -7,6 +7,8 @@
  *        }
  */
 
+import Catagotchi from './app';
+
 export default class Cat {
   private alive: boolean;
 
@@ -15,6 +17,8 @@ export default class Cat {
   private energy: number;
 
   private hunger: number;
+
+  private catagochi: Catagotchi;
 
   /**
    * @param alive starting bool

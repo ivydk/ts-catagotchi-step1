@@ -9,8 +9,6 @@ export default class Catagotchi {
 
   private status: string;
 
-  private gameDOM: Element;
-
   private ticker: Ticker;
 
   private keyListner: KeyListener;
@@ -51,33 +49,57 @@ export default class Catagotchi {
     this.keyListner = new KeyListener();
 
     this.status = 'I\'m happy <br>';
-
-    // DOM elements
-    this.gameDOM = document.querySelector('#game');
   }
 
   /**
    * Called for every game tick. Is used in the ticker
    */
   public gameTick(): void {
-    document.querySelector('#displayStatus').innerHTML = this.cat.meow();
     if (this.cat.isAlive()) {
       this.cat.ignore();
 
       this.executeUserAction();
 
-      this.cat.updateDisplays();
-    } else {
-      document.querySelector('#displayCatDied').innerHTML = 'You killed the cat :(';
-      this.clearScreen();
+      this.updateDisplays();
     }
   }
 
-  private clearScreen = () => {
-    console.log('clear pleaseee');
-    this.cat.setMood(this.startMood);
-    console.log(this.cat.getMood());
-  };
+  /**
+   * Writes text to the canvas
+   *
+   * @param text - Text to write
+   * @param xCoordinate - Horizontal coordinate in pixels
+   * @param yCoordinate - Vertical coordinate in pixels
+   * @param fontSize - Font size in pixels
+   * @param color - The color of the text
+   * @param alignment - Where to align the text
+   */
+  private writeTextToCanvas(
+    text: string,
+    xCoordinate: number,
+    yCoordinate: number,
+    fontSize = 20,
+    color = 'red',
+    alignment: CanvasTextAlign = 'center',
+  ) {
+    this.ctx.font = ` ${fontSize}px sans-serif`;
+    this.ctx.fillStyle = color;
+    this.ctx.textAlign = alignment;
+    this.ctx.fillText(text, xCoordinate, yCoordinate);
+  }
+
+  /**
+   * Loads an image in such a way that the screen doesn't constantly flicker
+   *
+   * @param source Path to the image file to be loaded
+   * @returns An image element
+   */
+  // eslint-disable-next-line class-methods-use-this
+  private loadNewImage(source: string): HTMLImageElement {
+    const img = new Image();
+    img.src = source;
+    return img;
+  }
 
   private executeUserAction = () => {
     // 70 is 'f' for feed
@@ -85,27 +107,29 @@ export default class Catagotchi {
       if (this.keyListner.isKeyDown(KeyListener.KEY_F)) {
         console.log('FEEEED');
         this.cat.feed();
-        this.cat.updateDisplays();
       }
 
       // 83 is 's' for sleep
       if (this.keyListner.isKeyDown(83)) {
         this.cat.sleep();
         console.log('SLEEP');
-        this.cat.updateDisplays();
       }
 
       // 80 is 'p' for play
       if (this.keyListner.isKeyDown(80)) {
         this.cat.play();
         console.log('PLAYY');
-        this.cat.updateDisplays();
       }
     }
+  };
+
+  private updateDisplays = (): void => {
+    this.writeTextToCanvas('hello', 200, 200);
   };
 }
 
 const init = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const catGame = new Catagotchi(document.querySelector('#canvas'));
 };
 

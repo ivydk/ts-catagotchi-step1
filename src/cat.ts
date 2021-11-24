@@ -7,8 +7,6 @@
  *        }
  */
 
-import KeyListener from './keyListner';
-
 export default class Cat {
   private alive: boolean;
 
@@ -17,10 +15,6 @@ export default class Cat {
   private energy: number;
 
   private hunger: number;
-
-  private keyListner: KeyListener;
-
-  private 1: number;
 
   /**
    * @param alive starting bool
@@ -38,7 +32,6 @@ export default class Cat {
     this.mood = mood;
     this.energy = energy;
     this.hunger = hunger;
-    this.updateDisplays();
 
     // !! nog doen: de buttons idle maken als de cat dood is
     // this.allButtons = document.querySelector('#buttons');
@@ -55,30 +48,16 @@ export default class Cat {
 
   public feed = (): void => {
     this.hunger -= 1;
-    this.updateDisplays();
   };
 
   public sleep = (): void => {
     this.energy += 1;
     this.hunger += 1;
-    this.updateDisplays();
   };
 
   public play = (): void => {
     this.mood += 1;
     this.energy -= 1;
-    this.updateDisplays();
-  };
-
-  // !! liever in de game class
-  public updateDisplays = (): void => {
-    document.querySelector('#displayMood').innerHTML = `${this.mood}`;
-    document.querySelector('#displayEnergy').innerHTML = `${this.energy}`;
-    document.querySelector('#displayHunger').innerHTML = `${this.hunger}`;
-
-    // !! nog even doen: status en cat died op het scherm krijgen.
-    // document.querySelector('#displayStatus').innerHTML =
-    // this.displayCatDied = document.querySelector('#displayCatDied');
   };
 
   /**
@@ -131,7 +110,7 @@ export default class Cat {
   public meow = (): string => {
     let meow = '';
     if (this.hunger < 7 && this.mood > 3 && this.energy > 3) {
-      meow = `I'm happy <br>`;
+      meow = 'I\'m happy <br>';
     }
     if (this.hunger >= 7) {
       meow += 'Feed me! <br>';
@@ -145,7 +124,7 @@ export default class Cat {
     return meow;
   };
 
-  public setMood = (mood: number) => {
+  public setMood = (mood: number): void => {
     this.mood = mood;
   };
 }

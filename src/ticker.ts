@@ -20,7 +20,7 @@ export default class Ticker {
   public constructor(catagochi: Catagochi, interval: number) {
     this.catagochi = catagochi;
     this.interval = interval;
-    this.isStopped = true;
+    this.isStopped = false;
     // this.stopStartButton = document.querySelector('#stopStartTime');
     this.checkIfStopped();
     this.startRunning();
@@ -37,6 +37,7 @@ export default class Ticker {
    */
   private step = (timestamp: number) => {
     // Check if it is time to perform the next Tick
+
     if (timestamp - this.lastTickTimeStamp >= this.interval) {
       // Call the method of this object that needs to be called
       this.catagochi.gameTick();
@@ -48,7 +49,7 @@ export default class Ticker {
       // }
     }
     // Request the browser to call the step method on next animation frame
-    if (this.isStopped === true) {
+    if (this.isStopped === false) {
       requestAnimationFrame(this.step);
     }
   };
@@ -63,5 +64,9 @@ export default class Ticker {
   private checkIfStopped = () => {
     console.log(this.isStopped);
     return this.isStopped;
+  };
+
+  public setIsStopped = (isStopped: boolean): void => {
+    this.isStopped = isStopped;
   };
 }

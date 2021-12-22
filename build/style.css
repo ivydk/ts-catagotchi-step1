@@ -31,14 +31,13 @@
     color: palevioletred;
 }
 
-#displayCatDied {
+#displayTime {
     padding-top: 20px;
     font-weight: bold;
     color: palevioletred;
     font-size: 30px;
 }
 
-
-/* #canvas {
-    background-color: palevioletred;
-} */
+#canvas {
+    background-color: rgb(187, 231, 173);
+}

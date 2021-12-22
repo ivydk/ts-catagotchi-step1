@@ -1,9 +1,17 @@
 import Ticker from './ticker.js';
 import Cat from './cat.js';
 import KeyListener from './keyListner.js';
+import ClockDisplay from './clockDisplay.js';
+import ScoreCounter from './score.js';
+
+console.log('hi');
 
 export default class Catagotchi {
   private cat: Cat;
+
+  private clockDisplay: ClockDisplay;
+
+  private scoreCounter: ScoreCounter;
 
   // private lastTickTimeStamp: number;
 
@@ -26,6 +34,10 @@ export default class Catagotchi {
 
   private background: HTMLImageElement;
 
+  private timeCounting: boolean;
+
+  private deadString: string;
+
   /**
    * Creates the Catagotchi game. Sets all of the attributes of the
    * cat (mood, hunger, sleep, aliveness) to their default states.
@@ -39,17 +51,21 @@ export default class Catagotchi {
     this.ctx = this.canvas.getContext('2d');
     this.background = this.loadNewImage('img/HAPPY-CAT.png');
 
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
+    this.canvas.width = 600;
+    this.canvas.height = 600;
 
     // default status
+    this.timeCounting = true;
+    this.deadString = '';
     this.startEnergy = 10;
     this.startMood = 10;
     this.startHunger = 0;
 
     this.ticker = new Ticker(this, 1000);
+    this.clockDisplay = new ClockDisplay(this.writeTextToCanvas('START', 20, 55, 30, 'black', 'left'));
     this.cat = new Cat(true, this.startMood, this.startEnergy, this.startHunger);
     this.keyListner = new KeyListener();
+    this.scoreCounter = new ScoreCounter();
 
     this.status = 'I\'m happy <br>';
   }
@@ -61,10 +77,13 @@ export default class Catagotchi {
     if (this.cat.isAlive()) {
       this.cat.ignore();
       this.executeUserAction();
-      this.updateDisplays();
+      this.scoreCounter.setSore(5);
     } else {
-      this.updateDisplays();
+      console.log('dead');
+      // if the cat is dead the game stops completly, the ticker stops
+      this.ticker.setIsStopped(true);
     }
+    this.updateDisplays();
   }
 
   /**
@@ -82,9 +101,9 @@ export default class Catagotchi {
     xCoordinate: number,
     yCoordinate: number,
     fontSize = 20,
-    color = 'red',
+    color = 'black',
     alignment: CanvasTextAlign = 'center',
-  ) {
+  ): void {
     this.ctx.font = ` ${fontSize}px sans-serif`;
     this.ctx.fillStyle = color;
     this.ctx.textAlign = alignment;
@@ -105,7 +124,7 @@ export default class Catagotchi {
   }
 
   private backgroundImage = (): HTMLImageElement => {
-    if (!this.cat.isAlive()) {
+    if (this.cat.isAlive() === false) {
       this.background = this.loadNewImage('img/DEAD-CAT-4.png');
     } else if (this.cat.getEnergy() < 3) {
       this.background = this.loadNewImage('img/SLEEPY-CAT.png');
@@ -113,7 +132,7 @@ export default class Catagotchi {
       this.background = this.loadNewImage('img/HAPPY-CAT.png');
     } else if (this.cat.getHunger() <= 4 && this.cat.getMood() >= 6 && this.cat.getEnergy() >= 5) {
       this.background = this.loadNewImage('img/NORMAL-CAT.png');
-    } else {
+    } else if (this.cat.getHunger() > 4 && this.cat.getMood() < 6 && this.cat.getEnergy() < 5) {
       this.background = this.loadNewImage('img/GRUMPY-CAT.png');
     }
     return this.background;
@@ -124,37 +143,48 @@ export default class Catagotchi {
     if (this.cat.getIsAlive()) {
       if (this.keyListner.isKeyDown(KeyListener.KEY_F)) {
         console.log('FEEEED');
+        this.scoreCounter.setSore(20);
         this.cat.feed();
       }
 
       // 83 is 's' for sleep
       if (this.keyListner.isKeyDown(KeyListener.KEY_S)) {
         this.cat.sleep();
+        this.scoreCounter.setSore(30);
         console.log('SLEEP');
       }
 
       // 80 is 'p' for play
       if (this.keyListner.isKeyDown(KeyListener.KEY_P)) {
         this.cat.play();
+        this.scoreCounter.setSore(50);
         console.log('PLAYY');
       }
     }
   };
 
   private updateDisplays = (): void => {
+    if (!this.cat.isAlive()) {
+      this.timeCounting = false;
+      this.deadString = 'You killed me :(';
+    }
+
     this.clearScreen();
 
     this.ctx.drawImage(
       this.background,
+      150,
       100,
-      100,
-      this.background.width / 2,
-      this.canvas.height / 2,
+      300,
+      350,
     );
 
-    this.writeTextToCanvas(`Energy: ${this.cat.getEnergy()}`, 125, 600);
-    this.writeTextToCanvas(`Hunger: ${this.cat.getHunger()}`, 275, 600);
-    this.writeTextToCanvas(`Mood: ${this.cat.getMood()}`, 425, 600);
+    this.writeTextToCanvas(`${this.clockDisplay.timeTick(this.timeCounting)}`, 20, 55, 30, 'black', 'left');
+    this.writeTextToCanvas(`Energy: ${this.cat.getEnergy()}`, 20, 100, 20, 'black', 'left');
+    this.writeTextToCanvas(`Hunger: ${this.cat.getHunger()}`, 20, 125, 20, 'black', 'left');
+    this.writeTextToCanvas(`Mood: ${this.cat.getMood()}`, 20, 150, 20, 'black', 'left');
+    this.writeTextToCanvas(`Score: ${this.scoreCounter.getScore()}`, 300, 550, 40);
+    this.writeTextToCanvas(`${this.deadString}`, 300, 500, 40, 'black', 'center');
     this.backgroundImage();
   };
 
@@ -173,9 +203,3 @@ const init = () => {
 };
 
 window.addEventListener('load', init);
-
-/**
- * versnelde ifelse
- *
- *  alive === true ? 'alive' : 'dead'
- */
